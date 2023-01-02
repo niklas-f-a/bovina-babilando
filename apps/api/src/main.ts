@@ -10,7 +10,9 @@ const MongoDBStore = makeMongoStore(session);
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const mongoCred = app.get(ConfigService).get('authDb');
+  const configService = app.get(ConfigService);
+  const mongoCred = configService.get('authDb');
+  const sessionCred = configService.get('session');
 
   const store = new MongoDBStore({
     uri: `mongodb://${mongoCred.username}:${mongoCred.password}@${mongoCred.host}/${mongoCred.name}${mongoCred.options}`,
@@ -21,7 +23,7 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: process.env.SESSION_SECRET,
+      secret: sessionCred.secret,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24, // 1 day
       },
@@ -34,7 +36,7 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  const port = app.get(ConfigService).get('apiPort');
+  const port = configService.get('apiPort');
   await app.listen(port);
 }
 bootstrap();
