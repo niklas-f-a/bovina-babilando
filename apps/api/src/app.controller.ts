@@ -3,7 +3,9 @@ import { Controller, Get, Inject, Req, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Request } from 'express';
 
-@Controller()
+@Controller({
+  version: '1',
+})
 export class AppController {
   // constructor(
   //   @Inject('AUTH_SERVICE') private authClient: ClientProxy,

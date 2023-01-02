@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import * as session from 'express-session';
 import * as makeMongoStore from 'connect-mongodb-session';
 import * as passport from 'passport';
+import { VersioningType } from '@nestjs/common';
 
 const MongoDBStore = makeMongoStore(session);
 
@@ -20,6 +21,10 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix('api');
+
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
 
   app.use(
     session({
