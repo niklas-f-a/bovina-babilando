@@ -1,8 +1,11 @@
-import configuration from '@app/shared/config/configuration';
+import { configuration } from '@app/shared/config';
+import { rabbitProvider } from '@app/shared/providers';
+import { SessionSerializer } from '@app/shared/serializer';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { GithubStrategy } from './strategies';
 
 @Module({
   imports: [
@@ -11,8 +14,13 @@ import { AppService } from './app.service';
       envFilePath: './.env',
       load: [configuration],
     }),
+    PassportModule.register({ session: true }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    SessionSerializer,
+    GithubStrategy,
+    rabbitProvider('AUTH_SERVICE', 'auth_queue'),
+  ],
 })
 export class AppModule {}
