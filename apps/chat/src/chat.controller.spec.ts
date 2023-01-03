@@ -18,7 +18,7 @@ describe('ChatController', () => {
     expect(chatController).toBeDefined();
   });
 
-  it('should fail /Testing workflow remove later/', () => {
-    expect(chatController).toBeCalledTimes(0);
+  it('should return hello /Testing workflow remove later/', () => {
+    expect(chatController.getHello()).toBe('Hello World!');
   });
 });
