@@ -1,3 +1,6 @@
+import { SharedModule } from '@app/shared';
+import { ServiceTokens } from '@app/shared/config';
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -5,18 +8,24 @@ import { AuthService } from './auth.service';
 describe('AuthController', () => {
   let authController: AuthController;
 
+  const mockAuthService = {};
+
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
+      imports: [SharedModule],
       controllers: [AuthController],
-      providers: [AuthService],
-    }).compile();
+      providers: [
+        { provide: ServiceTokens.AUTH_SERVICE, useClass: AuthService },
+      ],
+    })
+      .overrideProvider(ServiceTokens.AUTH_SERVICE)
+      .useValue(mockAuthService)
+      .compile();
 
     authController = app.get<AuthController>(AuthController);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(authController.getHello()).toBe('Hello World!');
-    });
+  it('should be defined', () => {
+    expect(authController).toBeDefined();
   });
 });

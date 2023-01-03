@@ -24,7 +24,7 @@ export default () => ({
     clientId: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
     callbackURL: process.env.GITHUB_CALLBACK_URL,
-    scope: process.env.GITHUB_SCOPE.split(','),
+    //scope: process.env.GITHUB_SCOPE.split(','),
   },
   session: {
     secret: process.env.SESSION_SECRET,
