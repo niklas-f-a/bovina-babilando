@@ -1,4 +1,4 @@
-name: api tests
+name: chat tests
 
 on:
   pull_request:
