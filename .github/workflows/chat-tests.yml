@@ -1,4 +1,4 @@
-name: chat tests
+name: Chat Tests
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: auth tests
+name: Auth Tests
 
 on:
   pull_request:

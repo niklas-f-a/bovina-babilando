@@ -1,4 +1,4 @@
-name: Shared Lib tests
+name: Shared Lib Tests
 
 on:
   pull_request:
