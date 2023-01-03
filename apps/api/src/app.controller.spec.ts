@@ -2,7 +2,6 @@ import { configuration, RabbitQueue, ServiceTokens } from '@app/shared/config';
 import { rabbitProvider } from '@app/shared/providers';
 import { SessionSerializer } from '@app/shared/serializer';
 import { ConfigModule } from '@nestjs/config';
-import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Request } from 'express';
 import { AppController } from './app.controller';
@@ -31,11 +30,11 @@ describe('AppController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-          envFilePath: './.env',
-          load: [configuration],
-        }),
+        // ConfigModule.forRoot({
+        //   isGlobal: true,
+        //   envFilePath: './.env',
+        //   load: [configuration],
+        // }),
       ],
       controllers: [AppController],
       providers: [
