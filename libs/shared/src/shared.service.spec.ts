@@ -15,4 +15,8 @@ describe('SharedService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  it('should return funkar /Testing workflow remove later/', () => {
+    expect(service.testRmLater()).toBe('funkar');
+  });
 });
