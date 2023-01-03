@@ -6,14 +6,14 @@ import { AuthModule } from './auth.module';
 async function bootstrap() {
   const app = await NestFactory.create(AuthModule);
 
-  const rabbitOptions = app.get(ConfigService).get('rabbitOptions');
+  const rabbitOptions = app
+    .get(ConfigService)
+    .get<{ url: string; queue: { auth: string } }>('rabbitOptions');
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
-      urls: [
-        `amqp://${rabbitOptions.user}:${rabbitOptions.pass}@${rabbitOptions.host}`,
-      ],
+      urls: [rabbitOptions.url],
       noAck: false,
       queue: rabbitOptions.queue.auth,
       queueOptions: {

@@ -4,12 +4,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 export const dbConnection = MongooseModule.forRootAsync({
   imports: [ConfigModule],
   useFactory: async (configService: ConfigService) => {
-    const { username, password, host, name, options } =
-      configService.get('authDb');
+    const { uri } = configService.get<{ uri: string }>('authDb');
 
-    return {
-      uri: `mongodb://${username}:${password}@${host}/${name}${options}`,
-    };
+    return { uri };
   },
   inject: [ConfigService],
 });

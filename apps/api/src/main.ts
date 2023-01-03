@@ -13,11 +13,13 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const mongoCred = configService.get('authDb');
-  const sessionCred = configService.get('session');
+  const sessionCred = configService.get<{ collection: string; secret: string }>(
+    'session',
+  );
 
   const store = new MongoDBStore({
-    uri: `mongodb://${mongoCred.username}:${mongoCred.password}@${mongoCred.host}/${mongoCred.name}${mongoCred.options}`,
-    collection: 'sessions',
+    uri: mongoCred.uri,
+    collection: sessionCred.collection,
   });
 
   app.setGlobalPrefix('api');

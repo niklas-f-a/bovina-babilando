@@ -1,4 +1,4 @@
-import { configuration } from '@app/shared/config';
+import { ServiceTokens, configuration, RabbitQueue } from '@app/shared/config';
 import { rabbitProvider } from '@app/shared/providers';
 import { SessionSerializer } from '@app/shared/serializer';
 import { Module } from '@nestjs/common';
@@ -20,7 +20,7 @@ import { GithubStrategy } from './strategies';
   providers: [
     SessionSerializer,
     GithubStrategy,
-    rabbitProvider('AUTH_SERVICE', 'auth_queue'),
+    rabbitProvider(ServiceTokens.AUTH_SERVICE, RabbitQueue.AUTH),
   ],
 })
 export class AppModule {}

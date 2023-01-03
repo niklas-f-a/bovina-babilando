@@ -1,5 +1,5 @@
 import { SharedModule } from '@app/shared';
-import { configuration } from '@app/shared/config';
+import { configuration, ServiceTokens } from '@app/shared/config';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -19,6 +19,6 @@ import { dbConnection, User, UserSchema } from './db';
     SharedModule,
   ],
   controllers: [AuthController],
-  providers: [{ provide: 'AUTH_SERVICE', useClass: AuthService }],
+  providers: [{ provide: ServiceTokens.AUTH_SERVICE, useClass: AuthService }],
 })
 export class AuthModule {}

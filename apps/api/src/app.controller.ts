@@ -4,7 +4,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Request } from 'express';
 
 @Controller({
-  version: '1',
+  version: process.env.API_VERSION,
 })
 export class AppController {
   // constructor(

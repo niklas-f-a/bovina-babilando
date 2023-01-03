@@ -1,5 +1,5 @@
 import { SharedService } from '@app/shared';
-import { AuthFrom } from '@app/shared/config';
+import { AuthFrom, ServiceTokens } from '@app/shared/config';
 import { Controller, Inject } from '@nestjs/common';
 import {
   Ctx,
@@ -14,7 +14,8 @@ import { User } from './db';
 export class AuthController {
   constructor(
     private readonly sharedService: SharedService,
-    @Inject('AUTH_SERVICE') private readonly authService: AuthService,
+    @Inject(ServiceTokens.AUTH_SERVICE)
+    private readonly authService: AuthService,
   ) {}
 
   @MessagePattern({ cmd: 'find-or-create-from-githubId' })
