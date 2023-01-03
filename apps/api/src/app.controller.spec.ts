@@ -13,7 +13,9 @@ describe('AppController', () => {
 
   const mockSerializer = {};
 
-  const mockStrategy = {};
+  const mockStrategy = {
+    super: jest.fn(),
+  };
 
   const mockAuthClient = {};
 
