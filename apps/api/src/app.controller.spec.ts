@@ -14,7 +14,7 @@ describe('AppController', () => {
   const mockSerializer = {};
 
   const mockStrategy = {
-    super: jest.fn(),
+    super: jest.fn(({}) => ({})),
   };
 
   const mockAuthClient = {};
@@ -36,7 +36,6 @@ describe('AppController', () => {
           envFilePath: './.env',
           load: [configuration],
         }),
-        PassportModule.register({ session: true }),
       ],
       controllers: [AppController],
       providers: [
@@ -45,11 +44,11 @@ describe('AppController', () => {
         rabbitProvider(ServiceTokens.AUTH_SERVICE, RabbitQueue.AUTH),
       ],
     })
-      .overrideGuard(SessionSerializer)
+      .overrideProvider(SessionSerializer)
       .useValue(mockSerializer)
-      .overrideGuard(GithubStrategy)
+      .overrideProvider(GithubStrategy)
       .useValue(mockStrategy)
-      .overrideGuard(ServiceTokens.AUTH_SERVICE)
+      .overrideProvider(ServiceTokens.AUTH_SERVICE)
       .useValue(mockAuthClient)
       .compile();
 
