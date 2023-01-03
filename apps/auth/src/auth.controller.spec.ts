@@ -8,7 +8,9 @@ import { AuthService } from './auth.service';
 describe('AuthController', () => {
   let authController: AuthController;
 
-  const mockAuthService = {};
+  const mockAuthService = {
+    findUserById: jest.fn((dto) => dto),
+  };
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
