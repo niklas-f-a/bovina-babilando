@@ -8,7 +8,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { dbConnection, User, UserSchema } from './db';
-import { TokenHandler } from './decorators';
 import { ExtractJwt } from './strategies/jwt.extractor';
 import { JwtStrategy } from './strategies/jwtAuth.strategy';
 
@@ -37,10 +36,6 @@ import { JwtStrategy } from './strategies/jwtAuth.strategy';
     { provide: ServiceTokens.AUTH_SERVICE, useClass: AuthService },
     JwtStrategy,
     ExtractJwt,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: TokenHandler,
-    },
   ],
 })
 export class AuthModule {}

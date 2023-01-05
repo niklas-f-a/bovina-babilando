@@ -9,7 +9,6 @@ import {
 } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
 import { User } from './db';
-import { TokenHandler } from './decorators';
 import { LoginDto } from './dto/login.dto';
 import { ExtractJwt } from './strategies/jwt.extractor';
 
@@ -45,7 +44,6 @@ export class AuthController {
     return this.authService.login(payload);
   }
 
-  @UseInterceptors(TokenHandler)
   @MessagePattern({ cmd: 'status' })
   status() {
     return { message: 'ok' };
