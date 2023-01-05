@@ -1,20 +1,33 @@
 import { AuthenticatedGuard, GithubAuthGuard } from '@app/shared/guards';
-import { Controller, Get, Inject, Req, UseGuards } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import {
+  Body,
+  Controller,
+  ForbiddenException,
+  Get,
+  Inject,
+  Post,
+  Req,
+  Res,
+  Session,
+  UseGuards,
+} from '@nestjs/common';
+import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
+import { LoginDto } from 'apps/auth/src/dto/login.dto';
 import { Request } from 'express';
+import { firstValueFrom, of, switchMap, tap } from 'rxjs';
 
 @Controller({
-  version: process.env.API_VERSION,
+  version: '1',
 })
 export class AppController {
-  // constructor(
-  //   @Inject('AUTH_SERVICE') private authClient: ClientProxy,
-  //   @Inject('CHAT_SERVICE') private chatService: ClientProxy,
-  // ) {}
+  constructor(
+    // @Inject('CHAT_SERVICE') private chatService: ClientProxy,
+    @Inject('AUTH_SERVICE') private authClient: ClientProxy,
+  ) {}
 
   @Get('/github/login')
   @UseGuards(GithubAuthGuard)
-  login() {
+  loginGithub() {
     return;
   }
 
@@ -29,5 +42,38 @@ export class AppController {
   @UseGuards(AuthenticatedGuard)
   getMe(@Req() req: Request) {
     return req.user;
+  }
+
+  @Post('auth/login')
+  async login(
+    @Session() session: Record<string, any>,
+    @Body() payload: LoginDto,
+  ) {
+    const access_token = (await firstValueFrom(
+      this.authClient.send({ cmd: 'login' }, payload).pipe(
+        switchMap((res) => {
+          if (res.status === 403) {
+            throw new ForbiddenException({ ...res.response });
+          }
+          return of(res.access_token);
+        }),
+      ),
+    )) as string;
+
+    session['access_token'] = access_token;
+    return { message: 'ok' };
+  }
+
+  @Get('test-guard')
+  testGuard(@Req() req: Request) {
+    console.log(req);
+
+    const access_token = 'token';
+    const record = new RmqRecordBuilder()
+      .setOptions({
+        headers: { ['token']: access_token },
+      })
+      .build();
+    return this.authClient.send({ cmd: 'status' }, record);
   }
 }

@@ -23,5 +23,6 @@ async function bootstrap() {
   });
 
   app.startAllMicroservices();
+  app.listen(6001);
 }
 bootstrap();

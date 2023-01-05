@@ -30,4 +30,5 @@ export default () => ({
     secret: process.env.SESSION_SECRET,
     collection: 'session',
   },
+  jwtSecret: process.env.JWT_SECRET,
 });
