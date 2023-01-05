@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { PassportSerializer } from '@nestjs/passport';
-import { User } from 'apps/auth/src/db/user.schema';
+import { User } from '@app/shared/user.schema';
 import { firstValueFrom, of, switchMap } from 'rxjs';
 import { ServiceTokens } from '../config';
 

@@ -5,8 +5,10 @@ export enum AuthFrom {
 
 export enum ServiceTokens {
   AUTH_SERVICE = 'AUTH_SERVICE',
+  USER_SERVICE = 'USER_SERVICE',
 }
 
 export enum RabbitQueue {
   AUTH = 'auth',
+  USER = 'user',
 }

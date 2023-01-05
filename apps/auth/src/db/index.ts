@@ -1,2 +1,2 @@
 export * from './connection';
-export * from './user.schema';
+export * from '../../../../libs/shared/src/user.schema';

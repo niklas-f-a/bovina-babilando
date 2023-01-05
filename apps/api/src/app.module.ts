@@ -21,6 +21,7 @@ import { GithubStrategy } from './strategies';
     SessionSerializer,
     GithubStrategy,
     rabbitProvider(ServiceTokens.AUTH_SERVICE, RabbitQueue.AUTH),
+    rabbitProvider(ServiceTokens.USER_SERVICE, RabbitQueue.USER),
   ],
 })
 export class AppModule {}

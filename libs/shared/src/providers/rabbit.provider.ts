@@ -7,7 +7,7 @@ export default (service: string, queue: RabbitQueue) => ({
   useFactory: (configService: ConfigService) => {
     const options = configService.get<{
       url: string;
-      queue: { auth: string; chat: string };
+      queue: { auth: string; chat: string; user: string };
     }>('rabbitOptions');
 
     return ClientProxyFactory.create({

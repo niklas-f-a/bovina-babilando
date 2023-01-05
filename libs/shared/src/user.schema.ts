@@ -20,4 +20,11 @@ export class User {
   photos: { value: string }[];
 }
 
+export interface IUser {
+  _id: string;
+  email: string;
+  githubId?: string;
+  photos?: { value: string }[];
+}
+
 export const UserSchema = SchemaFactory.createForClass(User);

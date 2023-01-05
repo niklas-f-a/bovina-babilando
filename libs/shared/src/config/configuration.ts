@@ -8,6 +8,7 @@ export default () => ({
     queue: {
       auth: process.env.RABBITMQ_AUTH_QUEUE,
       chat: process.env.RABBITMQ_CHAT_QUEUE,
+      user: process.env.RABBIT_USER_QUEUE,
     },
   },
   chatDb: {

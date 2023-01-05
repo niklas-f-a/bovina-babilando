@@ -1,4 +1,7 @@
+import { ServiceTokens } from '@app/shared/config';
+import { SignUpDto } from '@app/shared/dto';
 import { AuthenticatedGuard, GithubAuthGuard } from '@app/shared/guards';
+import { IUser } from '@app/shared/user.schema';
 import {
   Body,
   Controller,
@@ -14,7 +17,7 @@ import {
 import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
 import { LoginDto } from 'apps/auth/src/dto/login.dto';
 import { Request } from 'express';
-import { firstValueFrom, of, switchMap, tap } from 'rxjs';
+import { firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 
 @Controller({
   version: '1',
@@ -23,57 +26,63 @@ export class AppController {
   constructor(
     // @Inject('CHAT_SERVICE') private chatService: ClientProxy,
     @Inject('AUTH_SERVICE') private authClient: ClientProxy,
+    @Inject(ServiceTokens.USER_SERVICE) private userClient: ClientProxy,
   ) {}
 
-  @Get('/github/login')
-  @UseGuards(GithubAuthGuard)
-  loginGithub() {
-    return;
+  @Post('signup')
+  signup(signupDto: SignUpDto): Observable<Partial<IUser>> {
+    return this.userClient.send({ cmd: 'signup' }, signupDto);
   }
 
-  @Get('/github/callback')
-  @UseGuards(GithubAuthGuard)
-  authCallback() {
-    // send event to chat
-    return { message: 'ok' };
-  }
+  // @Get('/github/login')
+  // @UseGuards(GithubAuthGuard)
+  // loginGithub() {
+  //   return;
+  // }
 
-  @Get('me')
-  @UseGuards(AuthenticatedGuard)
-  getMe(@Req() req: Request) {
-    return req.user;
-  }
+  // @Get('/github/callback')
+  // @UseGuards(GithubAuthGuard)
+  // authCallback() {
+  //   // send event to chat
+  //   return { message: 'ok' };
+  // }
 
-  @Post('auth/login')
-  async login(
-    @Session() session: Record<string, any>,
-    @Body() payload: LoginDto,
-  ) {
-    const access_token = (await firstValueFrom(
-      this.authClient.send({ cmd: 'login' }, payload).pipe(
-        switchMap((res) => {
-          if (res.status === 403) {
-            throw new ForbiddenException({ ...res.response });
-          }
-          return of(res.access_token);
-        }),
-      ),
-    )) as string;
+  // @Get('me')
+  // @UseGuards(AuthenticatedGuard)
+  // getMe(@Req() req: Request) {
+  //   return req.user;
+  // }
 
-    session['access_token'] = access_token;
-    return { message: 'ok' };
-  }
+  // @Post('auth/login')
+  // async login(
+  //   @Session() session: Record<string, any>,
+  //   @Body() payload: LoginDto,
+  // ) {
+  //   const access_token = (await firstValueFrom(
+  //     this.authClient.send({ cmd: 'login' }, payload).pipe(
+  //       switchMap((res) => {
+  //         if (res.status === 403) {
+  //           throw new ForbiddenException({ ...res.response });
+  //         }
+  //         return of(res.access_token);
+  //       }),
+  //     ),
+  //   )) as string;
 
-  @Get('test-guard')
-  testGuard(@Req() req: Request) {
-    console.log(req);
+  //   session['access_token'] = access_token;
+  //   return { message: 'ok' };
+  // }
 
-    const access_token = 'token';
-    const record = new RmqRecordBuilder()
-      .setOptions({
-        headers: { ['token']: access_token },
-      })
-      .build();
-    return this.authClient.send({ cmd: 'status' }, record);
-  }
+  // @Get('test-guard')
+  // testGuard(@Req() req: Request) {
+  //   console.log(req);
+
+  //   const access_token = 'token';
+  //   const record = new RmqRecordBuilder()
+  //     .setOptions({
+  //       headers: { ['token']: access_token },
+  //     })
+  //     .build();
+  //   return this.authClient.send({ cmd: 'status' }, record);
+  // }
 }
