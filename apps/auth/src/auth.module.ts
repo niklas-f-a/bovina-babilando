@@ -1,5 +1,5 @@
 import { SharedModule } from '@app/shared';
-import { configuration, ServiceTokens } from '@app/shared/config';
+import { configuration, ClientTokens } from '@app/shared/config';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -28,7 +28,7 @@ import { JwtStrategy } from './strategies/jwtAuth.strategy';
   ],
   controllers: [AuthController],
   providers: [
-    { provide: ServiceTokens.AUTH_SERVICE, useClass: AuthService },
+    { provide: ClientTokens.AUTH_SERVICE, useClass: AuthService },
     JwtStrategy,
     ExtractJwt,
   ],

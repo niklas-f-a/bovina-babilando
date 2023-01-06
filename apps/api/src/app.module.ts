@@ -1,4 +1,4 @@
-import { ServiceTokens, configuration, RabbitQueue } from '@app/shared/config';
+import { ClientTokens, configuration, RabbitQueue } from '@app/shared/config';
 import { rabbitProvider } from '@app/shared/providers';
 import { SessionSerializer } from '@app/shared/serializer';
 import { Module, ValidationPipe } from '@nestjs/common';
@@ -25,8 +25,8 @@ import { GithubStrategy } from './strategies';
     },
     SessionSerializer,
     GithubStrategy,
-    rabbitProvider(ServiceTokens.AUTH_SERVICE, RabbitQueue.AUTH),
-    rabbitProvider(ServiceTokens.USER_SERVICE, RabbitQueue.USER),
+    rabbitProvider(ClientTokens.AUTH_SERVICE, RabbitQueue.AUTH),
+    rabbitProvider(ClientTokens.USER, RabbitQueue.USER),
   ],
 })
 export class AppModule {}

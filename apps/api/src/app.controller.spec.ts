@@ -1,4 +1,4 @@
-import { RabbitQueue, ServiceTokens } from '@app/shared/config';
+import { RabbitQueue, ClientTokens } from '@app/shared/config';
 import { rabbitProvider } from '@app/shared/providers';
 import { SessionSerializer } from '@app/shared/serializer';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -33,14 +33,14 @@ describe('AppController', () => {
       providers: [
         SessionSerializer,
         GithubStrategy,
-        rabbitProvider(ServiceTokens.AUTH_SERVICE, RabbitQueue.AUTH),
+        rabbitProvider(ClientTokens.AUTH_SERVICE, RabbitQueue.AUTH),
       ],
     })
       .overrideProvider(SessionSerializer)
       .useValue(mockSerializer)
       .overrideProvider(GithubStrategy)
       .useValue(mockStrategy)
-      .overrideProvider(ServiceTokens.AUTH_SERVICE)
+      .overrideProvider(ClientTokens.AUTH_SERVICE)
       .useValue(mockAuthClient)
       .compile();
 
@@ -48,7 +48,9 @@ describe('AppController', () => {
   });
 
   it('should return the user', () => {
-    expect(appController.getMe(mockRequest)).toEqual({
+    expect(
+      appController.signup({ email: 'billy@nu.com', password: 'password' }),
+    ).toEqual({
       _id: expect.any(String),
       username: 'Billy',
       githubId: expect.any(String),

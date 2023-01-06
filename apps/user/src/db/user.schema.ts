@@ -13,8 +13,8 @@ export class User {
   @Prop()
   hashPass: string;
 
-  @Prop({ unique: true })
-  githubId: string;
+  @Prop({ unique: true, sparse: true })
+  githubId: string | null;
 
   @Prop()
   photos: { value: string }[];

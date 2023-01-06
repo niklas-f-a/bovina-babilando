@@ -1,5 +1,5 @@
 import { SharedService } from '@app/shared';
-import { AuthFrom, ServiceTokens } from '@app/shared/config';
+import { AuthFrom, ClientTokens } from '@app/shared/config';
 import { Controller, Inject, UseInterceptors } from '@nestjs/common';
 import {
   Ctx,
@@ -9,14 +9,14 @@ import {
 } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
 import { User } from '../../user/src/db';
-import { LoginDto } from '../../../libs/shared/src/dto/login.dto';
+import { LoginDto } from '../../../libs/shared/src/dto/user.dto';
 import { ExtractJwt } from './strategies/jwt.extractor';
 
 @Controller()
 export class AuthController {
   constructor(
     private readonly sharedService: SharedService,
-    @Inject(ServiceTokens.AUTH_SERVICE)
+    @Inject(ClientTokens.AUTH_SERVICE)
     private readonly authService: AuthService,
     private itit: ExtractJwt,
   ) {}

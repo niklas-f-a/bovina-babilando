@@ -3,9 +3,9 @@ export enum AuthFrom {
   MY_ID = 'MY_ID',
 }
 
-export enum ServiceTokens {
+export enum ClientTokens {
   AUTH_SERVICE = 'AUTH_SERVICE',
-  USER_SERVICE = 'USER_SERVICE',
+  USER = 'USER_CLIENT',
 }
 
 export enum RabbitQueue {

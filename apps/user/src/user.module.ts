@@ -1,4 +1,5 @@
-import { configuration, ServiceTokens } from '@app/shared/config';
+import { SharedModule } from '@app/shared';
+import { configuration, ClientTokens } from '@app/shared/config';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -13,10 +14,25 @@ import { UserService } from './user.service';
       envFilePath: './.env',
       load: [configuration],
     }),
+    SharedModule,
     dbConnection,
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeatureAsync([
+      {
+        name: User.name,
+        useFactory: () => {
+          const schema = UserSchema;
+          schema.pre('save', function () {
+            console.log(this);
+          });
+          return schema;
+        },
+      },
+    ]),
   ],
   controllers: [UserController],
-  providers: [{ provide: ServiceTokens.USER_SERVICE, useClass: UserService }],
+  providers: [
+    { provide: ClientTokens.USER, useClass: UserService },
+    UserService,
+  ],
 })
 export class UserModule {}

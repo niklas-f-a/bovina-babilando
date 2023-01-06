@@ -1,25 +1,14 @@
-import { ServiceTokens } from '@app/shared/config';
-import { SignUpDto } from '@app/shared/dto';
-import { AuthenticatedGuard, GithubAuthGuard } from '@app/shared/guards';
-import { IUser } from 'apps/user/src/db/user.schema';
+import { ClientTokens } from '@app/shared/config';
 import {
+  BadRequestException,
   Body,
   Controller,
-  ForbiddenException,
-  Get,
-  HttpCode,
-  HttpStatus,
   Inject,
   Post,
-  Req,
-  Res,
-  Session,
-  UseGuards,
 } from '@nestjs/common';
-import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
-import { LoginDto } from '@app/shared/dto/login.dto';
-import { Request } from 'express';
-import { firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
+import { ClientProxy } from '@nestjs/microservices';
+import { SignUpDto } from '@app/shared/dto';
+import { map } from 'rxjs';
 
 @Controller({
   version: '1',
@@ -27,13 +16,20 @@ import { firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 export class AppController {
   constructor(
     // @Inject('CHAT_SERVICE') private chatService: ClientProxy,
-    @Inject(ServiceTokens.AUTH_SERVICE) private authClient: ClientProxy,
-    @Inject(ServiceTokens.USER_SERVICE) private userClient: ClientProxy,
+    @Inject(ClientTokens.AUTH_SERVICE) private authClient: ClientProxy,
+    @Inject(ClientTokens.USER) private userClient: ClientProxy,
   ) {}
 
   @Post('signup')
-  async signup(signupDto: SignUpDto): Promise<any> {
-    return firstValueFrom(this.userClient.send({ cmd: 'signup' }, signupDto));
+  async signup(@Body() signUpDto: SignUpDto) {
+    return this.userClient.send({ cmd: 'sign-up' }, signUpDto).pipe(
+      map((value) => {
+        if (value.status === 400) {
+          throw new BadRequestException(value.message);
+        }
+        return value;
+      }),
+    );
   }
 
   // @Get('/github/login')

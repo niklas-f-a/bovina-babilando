@@ -3,12 +3,12 @@ import { ClientProxy } from '@nestjs/microservices';
 import { PassportSerializer } from '@nestjs/passport';
 import { User } from 'apps/user/src/db/user.schema';
 import { firstValueFrom, of, switchMap } from 'rxjs';
-import { ServiceTokens } from '../config';
+import { ClientTokens } from '../config';
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
   constructor(
-    @Inject(ServiceTokens.AUTH_SERVICE) private authService: ClientProxy,
+    @Inject(ClientTokens.AUTH_SERVICE) private authService: ClientProxy,
   ) {
     super();
   }
