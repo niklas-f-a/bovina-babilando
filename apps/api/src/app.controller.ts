@@ -1,12 +1,14 @@
 import { ServiceTokens } from '@app/shared/config';
 import { SignUpDto } from '@app/shared/dto';
 import { AuthenticatedGuard, GithubAuthGuard } from '@app/shared/guards';
-import { IUser } from '@app/shared/user.schema';
+import { IUser } from 'apps/user/src/db/user.schema';
 import {
   Body,
   Controller,
   ForbiddenException,
   Get,
+  HttpCode,
+  HttpStatus,
   Inject,
   Post,
   Req,
@@ -15,7 +17,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
-import { LoginDto } from 'apps/auth/src/dto/login.dto';
+import { LoginDto } from '@app/shared/dto/login.dto';
 import { Request } from 'express';
 import { firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 
@@ -25,13 +27,13 @@ import { firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 export class AppController {
   constructor(
     // @Inject('CHAT_SERVICE') private chatService: ClientProxy,
-    @Inject('AUTH_SERVICE') private authClient: ClientProxy,
+    @Inject(ServiceTokens.AUTH_SERVICE) private authClient: ClientProxy,
     @Inject(ServiceTokens.USER_SERVICE) private userClient: ClientProxy,
   ) {}
 
   @Post('signup')
-  signup(signupDto: SignUpDto): Observable<Partial<IUser>> {
-    return this.userClient.send({ cmd: 'signup' }, signupDto);
+  async signup(signupDto: SignUpDto): Promise<any> {
+    return firstValueFrom(this.userClient.send({ cmd: 'signup' }, signupDto));
   }
 
   // @Get('/github/login')

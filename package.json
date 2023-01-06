@@ -18,7 +18,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/api/test/jest-e2e.json"
+    "test:api:e2e": "jest --config ./apps/api/test/jest-e2e.json",
+    "test:api:watch:e2e": "jest --watch --config ./apps/api/test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -33,6 +34,8 @@
     "amqp-connection-manager": "^4.1.10",
     "amqplib": "^0.10.3",
     "bcrypt": "^5.1.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "connect-mongodb-session": "^3.1.1",
     "express-session": "^1.17.3",
     "mongoose": "^6.8.2",

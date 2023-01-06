@@ -8,8 +8,8 @@ import {
   RmqContext,
 } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
-import { User } from './db';
-import { LoginDto } from './dto/login.dto';
+import { User } from '../../user/src/db';
+import { LoginDto } from '../../../libs/shared/src/dto/login.dto';
 import { ExtractJwt } from './strategies/jwt.extractor';
 
 @Controller()
