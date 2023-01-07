@@ -3,7 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { PassportSerializer } from '@nestjs/passport';
 import { User } from 'apps/user/src/db/user.schema';
 import { firstValueFrom, of, switchMap } from 'rxjs';
-import { ClientTokens } from '../config';
+import { ClientTokens } from '../../../../libs/shared/src/config';
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
