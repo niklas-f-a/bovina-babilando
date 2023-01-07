@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, ObjectId } from 'mongoose';
+import { HydratedDocument, Model, ObjectId } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -10,8 +10,8 @@ export class User {
   @Prop({ unique: true })
   email: string;
 
-  @Prop()
-  hashPass: string;
+  @Prop({ select: false })
+  password: string;
 
   @Prop({ unique: true, sparse: true })
   githubId: string | null;

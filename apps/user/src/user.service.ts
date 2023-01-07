@@ -1,25 +1,27 @@
 import { SignUpDto } from '@app/shared/dto';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { from, Observable, of, switchMap } from 'rxjs';
 import { User, UserDocument } from './db';
 
 @Injectable()
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  signUp({ email, password }: SignUpDto): Observable<User | Error> {
-    return this.findByEmail(email).pipe(
-      switchMap((value) => {
-        if (value) return of(new BadRequestException('User already exist'));
-        const newUser = new this.userModel({ email, hashPass: password });
-        return from(newUser.save());
-      }),
-    );
+  async create(details: SignUpDto) {
+    try {
+      return await new this.userModel({
+        ...details,
+      }).save();
+    } catch (error) {
+      if (error.code === 11000) {
+        return new ConflictException('User with email already exist');
+      }
+      return error;
+    }
   }
 
-  findByEmail(email: string): Observable<User> {
-    return from(this.userModel.findOne({ email }));
+  findByEmail(email: string) {
+    return this.userModel.findOne({ email });
   }
 }

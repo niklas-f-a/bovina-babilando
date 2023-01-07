@@ -1,11 +1,5 @@
 import { ClientTokens } from '@app/shared/config';
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Inject,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { SignUpDto } from '@app/shared/dto';
 import { map } from 'rxjs';
@@ -24,8 +18,8 @@ export class AppController {
   async signup(@Body() signUpDto: SignUpDto) {
     return this.userClient.send({ cmd: 'sign-up' }, signUpDto).pipe(
       map((value) => {
-        if (value.status === 400) {
-          throw new BadRequestException(value.message);
+        if (value.status === 409) {
+          return value.response;
         }
         return value;
       }),

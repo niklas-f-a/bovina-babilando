@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { dbConnection, User, UserSchema } from './db';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
+import * as bcrypt from 'bcrypt';
 
 @Module({
   imports: [
@@ -21,9 +22,10 @@ import { UserService } from './user.service';
         name: User.name,
         useFactory: () => {
           const schema = UserSchema;
-          schema.pre('save', function () {
-            console.log(this);
+          schema.pre('save', async function () {
+            this.password = await bcrypt.hash(this.password, 10);
           });
+
           return schema;
         },
       },

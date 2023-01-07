@@ -19,6 +19,7 @@ export class UserController {
   @MessagePattern({ cmd: 'sign-up' })
   signup(@Ctx() context: RmqContext, @Payload() signUpDto: SignUpDto) {
     this.sharedService.rabbitAck(context);
-    return this.userService.signUp(signUpDto);
+
+    return this.userService.create(signUpDto);
   }
 }
