@@ -9,7 +9,6 @@ export class AuthService {
 
   async login(cred: Credentials, user: IUser) {
     if (!user) return new UnauthorizedException();
-    console.log(cred, user);
 
     const isMatch = await this.verifyPassword(cred.password, user.password);
     if (!isMatch) {

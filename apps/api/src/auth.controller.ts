@@ -1,7 +1,7 @@
 import { ClientTokens } from '@app/shared/config';
 import { Body, Controller, Inject, Post, Session } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { SignUpDto } from '@app/shared/dto';
+import { LoginDto, SignUpDto } from '@app/shared/dto';
 import { map, switchMap } from 'rxjs';
 
 @Controller({
@@ -15,7 +15,7 @@ export class AuthController {
   ) {}
 
   @Post('signup')
-  async signup(
+  signup(
     @Session() session: Record<string, any>,
     @Body() signUpDto: SignUpDto,
   ) {
@@ -33,6 +33,19 @@ export class AuthController {
         ),
       ),
       map((value) => {
+        session['access_token'] = value.access_token;
+        return { message: 'ok' };
+      }),
+    );
+  }
+
+  @Post('login')
+  login(@Session() session: Record<string, any>, @Body() loginDto: LoginDto) {
+    return this.authClient.send({ cmd: 'login' }, loginDto).pipe(
+      map((value) => {
+        if (value.status === 401) {
+          throw value.response;
+        }
         session['access_token'] = value.access_token;
         return { message: 'ok' };
       }),

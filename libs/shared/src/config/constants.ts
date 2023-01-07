@@ -7,3 +7,8 @@ export enum RabbitQueue {
   AUTH = 'auth',
   USER = 'user',
 }
+
+export enum ServiceTokens {
+  AUTH = 'AUTH_SERVICE',
+  USER = 'USER_SERVICE',
+}

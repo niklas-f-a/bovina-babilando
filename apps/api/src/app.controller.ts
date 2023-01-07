@@ -1,8 +1,6 @@
 import { ClientTokens } from '@app/shared/config';
-import { Body, Controller, Inject, Post, Req, Session } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { SignUpDto } from '@app/shared/dto';
-import { map, switchMap } from 'rxjs';
 
 @Controller({
   version: '1',

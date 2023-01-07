@@ -1,6 +1,7 @@
 import { SharedService } from '@app/shared';
+import { ServiceTokens } from '@app/shared/config';
 import { SignUpDto } from '@app/shared/dto';
-import { Controller } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
 import {
   Ctx,
   MessagePattern,
@@ -12,7 +13,7 @@ import { UserService } from './user.service';
 @Controller()
 export class UserController {
   constructor(
-    private readonly userService: UserService,
+    @Inject(ServiceTokens.USER) private readonly userService: UserService,
     private readonly sharedService: SharedService,
   ) {}
 
@@ -24,9 +25,9 @@ export class UserController {
   }
 
   @MessagePattern({ cmd: 'find-by-email' })
-  async findByEmail(@Ctx() context: RmqContext, @Payload() payload: any) {
+  findByEmail(@Ctx() context: RmqContext, @Payload() payload: any) {
     this.sharedService.rabbitAck(context);
 
-    return await this.userService.findByEmail(payload.email, payload.select);
+    return this.userService.findByEmail(payload.email, payload.select);
   }
 }

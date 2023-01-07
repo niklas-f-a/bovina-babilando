@@ -9,7 +9,7 @@ import {
 } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
 import { Credentials, IUser } from '../../user/src/db';
-import { ClientTokens } from '@app/shared/config';
+import { ClientTokens, ServiceTokens } from '@app/shared/config';
 import { switchMap } from 'rxjs';
 
 @Controller()
@@ -17,7 +17,7 @@ export class AuthController {
   constructor(
     @Inject(ClientTokens.USER) private userClient: ClientProxy,
     private readonly sharedService: SharedService,
-    private readonly authService: AuthService,
+    @Inject(ServiceTokens.AUTH) private readonly authService: AuthService,
   ) {}
 
   @MessagePattern({ cmd: 'login' })

@@ -1,5 +1,5 @@
 import { SharedModule } from '@app/shared';
-import { configuration, ClientTokens } from '@app/shared/config';
+import { configuration, ClientTokens, ServiceTokens } from '@app/shared/config';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -33,8 +33,10 @@ import * as bcrypt from 'bcrypt';
   ],
   controllers: [UserController],
   providers: [
-    { provide: ClientTokens.USER, useClass: UserService },
-    UserService,
+    {
+      provide: ServiceTokens.USER,
+      useClass: UserService,
+    },
   ],
 })
 export class UserModule {}
