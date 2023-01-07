@@ -21,7 +21,7 @@ export class UserService {
     }
   }
 
-  findByEmail(email: string) {
-    return this.userModel.findOne({ email });
+  findByEmail(email: string, selectOptions?: string) {
+    return this.userModel.findOne({ email }).select('+' + selectOptions);
   }
 }

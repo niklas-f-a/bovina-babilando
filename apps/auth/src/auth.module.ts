@@ -1,5 +1,6 @@
 import { SharedModule } from '@app/shared';
-import { configuration, ClientTokens } from '@app/shared/config';
+import { configuration, ClientTokens, RabbitQueue } from '@app/shared/config';
+import { rabbitProvider } from '@app/shared/providers';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -30,7 +31,9 @@ import { JwtStrategy } from './strategies/jwtAuth.strategy';
   providers: [
     { provide: ClientTokens.AUTH, useClass: AuthService },
     JwtStrategy,
+    AuthService,
     ExtractJwt,
+    rabbitProvider(ClientTokens.USER, RabbitQueue.USER),
   ],
 })
 export class AuthModule {}

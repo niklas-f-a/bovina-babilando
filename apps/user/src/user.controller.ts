@@ -22,4 +22,11 @@ export class UserController {
 
     return this.userService.create(signUpDto);
   }
+
+  @MessagePattern({ cmd: 'find-by-email' })
+  async findByEmail(@Ctx() context: RmqContext, @Payload() payload: any) {
+    this.sharedService.rabbitAck(context);
+
+    return await this.userService.findByEmail(payload.email, payload.select);
+  }
 }

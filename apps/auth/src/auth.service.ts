@@ -1,49 +1,30 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User, UserDocument } from '../../user/src/db';
-import { AuthFrom } from '@app/shared/config';
-import { LoginDto } from '../../../libs/shared/src/dto/user.dto';
-import * as bcrypt from 'bcrypt';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Credentials, IUser } from '../../user/src/db';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
-  async findUserById(id: string, authFrom: AuthFrom) {
-    return authFrom === AuthFrom.GITHUB_ID
-      ? await this.userModel.findOne({ githubId: id }).exec()
-      : await this.userModel.findById(id).exec();
-  }
+  async login(cred: Credentials, user: IUser) {
+    if (!user) return new UnauthorizedException();
+    console.log(cred, user);
 
-  async findUserByEmail(email: string) {
-    return this.userModel.findOne({ email }).exec();
-  }
-
-  async findOrCreate(details: User, authFrom: AuthFrom) {
-    const user = await this.findUserById(details.githubId, authFrom);
-    if (user) return user;
-
-    return await this.createUser(details);
-  }
-
-  async createUser(details: User) {
-    return this.userModel.create(details);
-  }
-
-  async login(loginDto: LoginDto) {
-    const { email, password } = loginDto;
-    const user = await this.findUserByEmail(email);
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (isMatch) {
-      const payload = { email: user.email, sub: user._id };
-      return { access_token: this.jwtService.sign(payload) };
-    } else {
-      return new ForbiddenException('Invalid credentials');
+    const isMatch = await this.verifyPassword(cred.password, user.password);
+    if (!isMatch) {
+      return new UnauthorizedException();
     }
+    const access_token = await this.jwtService.signAsync({
+      sub: user._id,
+      email: user.email,
+      githubId: user.githubId,
+    });
+
+    return { access_token };
+  }
+
+  verifyPassword(password: string, hashPass: string) {
+    return bcrypt.compare(password, hashPass);
   }
 }

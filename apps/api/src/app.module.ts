@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { AppController } from './app.controller';
+import { AuthController } from './auth.controller';
 import { GithubStrategy } from './strategies';
 
 @Module({
@@ -17,7 +18,7 @@ import { GithubStrategy } from './strategies';
     }),
     PassportModule.register({ session: true }),
   ],
-  controllers: [AppController],
+  controllers: [AppController, AuthController],
   providers: [
     {
       provide: APP_PIPE,

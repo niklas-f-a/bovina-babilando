@@ -1,5 +1,5 @@
 import { ClientTokens } from '@app/shared/config';
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post, Req, Session } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { SignUpDto } from '@app/shared/dto';
 import { map, switchMap } from 'rxjs';
@@ -14,19 +14,6 @@ export class AppController {
     @Inject(ClientTokens.USER) private userClient: ClientProxy,
   ) {}
 
-  @Post('signup')
-  async signup(@Body() signUpDto: SignUpDto) {
-    return this.userClient.send({ cmd: 'sign-up' }, signUpDto).pipe(
-      map((value) => {
-        if (value.status === 409) {
-          return value.response;
-        }
-        // send token
-        return value;
-      }),
-    );
-  }
-
   // @Get('/github/login')
   // @UseGuards(GithubAuthGuard)
   // loginGithub() {
@@ -38,12 +25,6 @@ export class AppController {
   // authCallback() {
   //   // send event to chat
   //   return { message: 'ok' };
-  // }
-
-  // @Get('me')
-  // @UseGuards(AuthenticatedGuard)
-  // getMe(@Req() req: Request) {
-  //   return req.user;
   // }
 
   // @Post('auth/login')

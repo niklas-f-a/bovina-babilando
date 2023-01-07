@@ -23,8 +23,11 @@ export class User {
 export interface IUser {
   _id: string;
   email: string;
+  password: string;
   githubId?: string;
   photos?: { value: string }[];
 }
+
+export type Credentials = Pick<IUser, 'email' | 'password'>;
 
 export const UserSchema = SchemaFactory.createForClass(User);
