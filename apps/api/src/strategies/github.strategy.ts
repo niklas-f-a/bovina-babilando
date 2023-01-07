@@ -8,9 +8,7 @@ import { ClientTokens } from '@app/shared/config';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
-  constructor(
-    @Inject(ClientTokens.AUTH_SERVICE) private authClient: ClientProxy,
-  ) {
+  constructor(@Inject(ClientTokens.AUTH) private authClient: ClientProxy) {
     super({
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,

@@ -7,9 +7,7 @@ import { ClientTokens } from '../config';
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
-  constructor(
-    @Inject(ClientTokens.AUTH_SERVICE) private authService: ClientProxy,
-  ) {
+  constructor(@Inject(ClientTokens.AUTH) private authService: ClientProxy) {
     super();
   }
 

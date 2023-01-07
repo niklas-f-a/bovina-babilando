@@ -2,7 +2,7 @@ import { ClientTokens } from '@app/shared/config';
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { SignUpDto } from '@app/shared/dto';
-import { map } from 'rxjs';
+import { map, switchMap } from 'rxjs';
 
 @Controller({
   version: '1',
@@ -10,7 +10,7 @@ import { map } from 'rxjs';
 export class AppController {
   constructor(
     // @Inject('CHAT_SERVICE') private chatService: ClientProxy,
-    @Inject(ClientTokens.AUTH_SERVICE) private authClient: ClientProxy,
+    @Inject(ClientTokens.AUTH) private authClient: ClientProxy,
     @Inject(ClientTokens.USER) private userClient: ClientProxy,
   ) {}
 
@@ -21,6 +21,7 @@ export class AppController {
         if (value.status === 409) {
           return value.response;
         }
+        // send token
         return value;
       }),
     );

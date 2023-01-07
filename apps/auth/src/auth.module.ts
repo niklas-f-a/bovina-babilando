@@ -28,7 +28,7 @@ import { JwtStrategy } from './strategies/jwtAuth.strategy';
   ],
   controllers: [AuthController],
   providers: [
-    { provide: ClientTokens.AUTH_SERVICE, useClass: AuthService },
+    { provide: ClientTokens.AUTH, useClass: AuthService },
     JwtStrategy,
     ExtractJwt,
   ],

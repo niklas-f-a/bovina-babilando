@@ -25,7 +25,7 @@ import { GithubStrategy } from './strategies';
     },
     SessionSerializer,
     GithubStrategy,
-    rabbitProvider(ClientTokens.AUTH_SERVICE, RabbitQueue.AUTH),
+    rabbitProvider(ClientTokens.AUTH, RabbitQueue.AUTH),
     rabbitProvider(ClientTokens.USER, RabbitQueue.USER),
   ],
 })

@@ -4,7 +4,7 @@ export enum AuthFrom {
 }
 
 export enum ClientTokens {
-  AUTH_SERVICE = 'AUTH_SERVICE',
+  AUTH = 'AUTH_CLIENT',
   USER = 'USER_CLIENT',
 }
 
