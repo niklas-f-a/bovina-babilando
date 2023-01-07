@@ -3,10 +3,10 @@ import { CONTEXT, RequestContext } from '@nestjs/microservices';
 
 @Injectable()
 export class ExtractJwt {
-  private token: string;
+  token: string;
 
   constructor(@Inject(CONTEXT) private ctx: RequestContext) {
-    this.token = this.ctx.getContext().args[0].properties.headers?.token;
+    return this.ctx.getContext().args[0].properties.headers?.access_token;
   }
 
   getToken() {

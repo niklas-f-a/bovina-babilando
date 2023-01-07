@@ -26,4 +26,15 @@ export class AuthService {
   verifyPassword(password: string, hashPass: string) {
     return bcrypt.compare(password, hashPass);
   }
+
+  async verifyToken(token: string) {
+    try {
+      return await this.jwtService.verifyAsync(token);
+    } catch (error) {
+      if (error?.expiredAt < new Date()) {
+        throw new UnauthorizedException('Token Expired');
+      }
+      return error;
+    }
+  }
 }

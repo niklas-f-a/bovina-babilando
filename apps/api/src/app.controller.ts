@@ -1,5 +1,5 @@
 import { ClientTokens } from '@app/shared/config';
-import { Controller, Inject } from '@nestjs/common';
+import { Controller, Get, Inject, Req, Session } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Controller({
@@ -57,4 +57,10 @@ export class AppController {
   //     .build();
   //   return this.authClient.send({ cmd: 'status' }, record);
   // }
+
+  @Get('test')
+  testGuard(@Session() session: any) {
+    const { access_token } = session;
+    return this.authClient.send({ cmd: 'verify-jwt' }, { access_token });
+  }
 }

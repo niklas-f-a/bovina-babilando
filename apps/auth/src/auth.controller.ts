@@ -1,5 +1,5 @@
 import { SharedService } from '@app/shared';
-import { Controller, Inject } from '@nestjs/common';
+import { Controller, Inject, UseGuards } from '@nestjs/common';
 import {
   ClientProxy,
   Ctx,
@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { Credentials, IUser } from '../../user/src/db';
 import { ClientTokens, ServiceTokens } from '@app/shared/config';
 import { switchMap } from 'rxjs';
+import { JwtAuthGuard } from './guards';
 
 @Controller()
 export class AuthController {
@@ -21,7 +22,7 @@ export class AuthController {
   ) {}
 
   @MessagePattern({ cmd: 'login' })
-  async findOrCreate(@Payload() cred: Credentials, @Ctx() context: RmqContext) {
+  findOrCreate(@Payload() cred: Credentials, @Ctx() context: RmqContext) {
     this.sharedService.rabbitAck(context);
 
     const findPayload = {
@@ -34,5 +35,13 @@ export class AuthController {
         return this.authService.login(cred, user);
       }),
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @MessagePattern({ cmd: 'verify-jwt' })
+  verifyJwt(@Ctx() context: RmqContext) {
+    this.sharedService.rabbitAck(context);
+
+    return { message: 'authorized' };
   }
 }

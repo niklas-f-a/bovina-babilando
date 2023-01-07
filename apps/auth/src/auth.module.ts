@@ -11,7 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { JwtStrategy } from './strategies/jwtAuth.strategy';
+import { JwtStrategy, ExtractJwt } from './strategies';
 
 @Module({
   imports: [
@@ -34,6 +34,7 @@ import { JwtStrategy } from './strategies/jwtAuth.strategy';
   controllers: [AuthController],
   providers: [
     JwtStrategy,
+    ExtractJwt,
     {
       provide: ServiceTokens.AUTH,
       useClass: AuthService,
