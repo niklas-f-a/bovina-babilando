@@ -1,6 +1,6 @@
 import { RabbitQueue, ClientTokens } from '@app/shared/config';
 import { rabbitProvider } from '@app/shared/providers';
-import { SessionSerializer } from '@app/shared/serializer';
+import { SessionSerializer } from 'apps/api/src/serializer';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Request } from 'express';
 import { AppController } from './app.controller';
