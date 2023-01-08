@@ -1,6 +1,13 @@
 import { ClientTokens } from '@app/shared/config';
-import { Controller, Get, Inject, Req, Session } from '@nestjs/common';
+import {
+  Controller,
+  ForbiddenException,
+  Get,
+  Inject,
+  Session,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { catchError } from 'rxjs';
 
 @Controller({
   version: '1',
@@ -58,9 +65,14 @@ export class AppController {
   //   return this.authClient.send({ cmd: 'status' }, record);
   // }
 
+  // DONT USE
   @Get('test')
   testGuard(@Session() session: any) {
     const { access_token } = session;
-    return this.authClient.send({ cmd: 'verify-jwt' }, { access_token });
+    return this.authClient.send({ cmd: 'verify-jwt' }, { access_token }).pipe(
+      catchError((error) => {
+        throw new ForbiddenException(error.message);
+      }),
+    );
   }
 }

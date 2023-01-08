@@ -1,8 +1,15 @@
 import { ClientTokens } from '@app/shared/config';
-import { Body, Controller, Inject, Post, Session } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Inject,
+  Post,
+  Session,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { LoginDto, SignUpDto } from '@app/shared/dto';
-import { map, switchMap } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs';
 
 @Controller({
   version: '1',
@@ -43,11 +50,11 @@ export class AuthController {
   login(@Session() session: Record<string, any>, @Body() loginDto: LoginDto) {
     return this.authClient.send({ cmd: 'login' }, loginDto).pipe(
       map((value) => {
-        if (value.status === 401) {
-          throw value.response;
-        }
         session['access_token'] = value.access_token;
         return { message: 'ok' };
+      }),
+      catchError((error) => {
+        throw new UnauthorizedException(error.message);
       }),
     );
   }

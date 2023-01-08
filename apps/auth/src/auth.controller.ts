@@ -30,18 +30,16 @@ export class AuthController {
       select: 'password',
     };
 
-    return this.userClient.send({ cmd: 'find-by-email' }, findPayload).pipe(
-      switchMap((user: IUser) => {
-        return this.authService.login(cred, user);
-      }),
-    );
+    return this.userClient
+      .send({ cmd: 'find-by-email' }, findPayload)
+      .pipe(switchMap((user: IUser) => this.authService.login(cred, user)));
   }
 
   @UseGuards(JwtAuthGuard)
   @MessagePattern({ cmd: 'verify-jwt' })
-  verifyJwt(@Ctx() context: RmqContext) {
+  verifyJwt(@Ctx() context: RmqContext, @Payload() payload: Partial<IUser>) {
     this.sharedService.rabbitAck(context);
 
-    return { message: 'authorized' };
+    return { data: payload };
   }
 }
