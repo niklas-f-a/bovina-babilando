@@ -23,6 +23,10 @@ async function bootstrap() {
       uri: mongoCred.uri,
       collection: sessionCred.collection,
     });
+
+    // store.clear((err) => {
+    //   console.log(err, 'is');
+    // });
   }
 
   app.setGlobalPrefix('api');

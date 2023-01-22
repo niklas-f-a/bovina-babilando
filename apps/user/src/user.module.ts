@@ -23,6 +23,9 @@ import * as bcrypt from 'bcrypt';
         useFactory: () => {
           const schema = UserSchema;
           schema.pre('save', async function () {
+            if (this?.githubId) {
+              return;
+            }
             this.password = await bcrypt.hash(this.password, 10);
           });
 

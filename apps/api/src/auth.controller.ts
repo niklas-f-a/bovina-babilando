@@ -2,14 +2,17 @@ import { ClientTokens } from '@app/shared/config';
 import {
   Body,
   Controller,
+  Get,
   Inject,
   Post,
   Session,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { LoginDto, SignUpDto } from '@app/shared/dto';
 import { catchError, map, switchMap } from 'rxjs';
+import { GithubAuthGuard } from 'apps/auth/src/guards';
 
 @Controller({
   version: '1',
@@ -20,6 +23,19 @@ export class AuthController {
     @Inject(ClientTokens.AUTH) private authClient: ClientProxy,
     @Inject(ClientTokens.USER) private userClient: ClientProxy,
   ) {}
+
+  @Get('/github/login')
+  @UseGuards(GithubAuthGuard)
+  loginGithub() {
+    return;
+  }
+
+  @Get('/github/callback')
+  @UseGuards(GithubAuthGuard)
+  authCallback() {
+    // send event to chat
+    return { message: 'ok' };
+  }
 
   @Post('signup')
   signup(

@@ -13,7 +13,7 @@ export class User {
   @Prop({ select: false })
   password: string;
 
-  @Prop({ unique: true, sparse: true })
+  @Prop({ unique: true, sparse: true, select: true })
   githubId: string | null;
 
   @Prop()

@@ -5,9 +5,13 @@ import {
   Get,
   Inject,
   Session,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { AuthenticatedGuard, GithubAuthGuard } from 'apps/auth/src/guards';
+import { IUser } from 'apps/user/src/db';
 import { catchError } from 'rxjs';
+import { User } from './decorators';
 
 @Controller({
   version: '1',
@@ -18,19 +22,6 @@ export class AppController {
     @Inject(ClientTokens.AUTH) private authClient: ClientProxy,
     @Inject(ClientTokens.USER) private userClient: ClientProxy,
   ) {}
-
-  // @Get('/github/login')
-  // @UseGuards(GithubAuthGuard)
-  // loginGithub() {
-  //   return;
-  // }
-
-  // @Get('/github/callback')
-  // @UseGuards(GithubAuthGuard)
-  // authCallback() {
-  //   // send event to chat
-  //   return { message: 'ok' };
-  // }
 
   // @Post('auth/login')
   // async login(
@@ -74,5 +65,13 @@ export class AppController {
         throw new ForbiddenException(error.message);
       }),
     );
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Get('testgithub')
+  githubGuard(@User() user: Partial<IUser>) {
+    console.log(user);
+
+    return user;
   }
 }

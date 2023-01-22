@@ -8,6 +8,7 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
+import { IUser } from './db';
 import { UserService } from './user.service';
 
 @Controller()
@@ -29,5 +30,22 @@ export class UserController {
     this.sharedService.rabbitAck(context);
 
     return this.userService.findByEmail(payload.email, payload.select);
+  }
+
+  @MessagePattern({ cmd: 'find-or-create-from-githubId' })
+  async findByGithubIdOrCreate(
+    @Ctx() context: RmqContext,
+    @Payload() payload: Partial<IUser>,
+  ) {
+    this.sharedService.rabbitAck(context);
+
+    return await this.userService.findByGithubIdOrCreate(payload);
+  }
+
+  @MessagePattern({ cmd: 'find-github-user' })
+  async findByGithubId(@Ctx() context: RmqContext, @Payload() payload: string) {
+    this.sharedService.rabbitAck(context);
+
+    return await this.userService.findByGithubId(payload);
   }
 }

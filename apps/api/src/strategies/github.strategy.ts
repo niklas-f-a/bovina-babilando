@@ -8,7 +8,7 @@ import { ClientTokens } from '@app/shared/config';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
-  constructor(@Inject(ClientTokens.AUTH) private authClient: ClientProxy) {
+  constructor(@Inject(ClientTokens.USER) private userClient: ClientProxy) {
     super({
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
@@ -20,13 +20,15 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const { id: githubId, username, photos } = profile;
     // CHANGES NEEDED
-    return this.authClient.send(
-      { cmd: 'find-or-create-from-githubId' },
-      {
-        githubId,
-        username,
-        photos,
-      },
+    return await firstValueFrom(
+      this.userClient.send(
+        { cmd: 'find-or-create-from-githubId' },
+        {
+          githubId,
+          username,
+          photos,
+        },
+      ),
     );
   }
 }
