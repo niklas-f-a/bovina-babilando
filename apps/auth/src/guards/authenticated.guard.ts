@@ -19,13 +19,13 @@ export class AuthenticatedGuard implements CanActivate {
       const user = await firstValueFrom(
         this.authClient.send({ cmd: 'verify-jwt' }, { access_token }),
       );
-      console.log(user);
 
       if (user?.expiredAt || !user) return req.isAuthenticated();
 
       req.user = user;
       return true;
     }
+
     return req.isAuthenticated();
   }
 }
