@@ -30,13 +30,6 @@ export class AuthService {
   }
 
   async verifyToken(token: string) {
-    try {
-      return await this.jwtService.verifyAsync(token);
-    } catch (error) {
-      if (error?.expiredAt < new Date()) {
-        throw new UnauthorizedException('Token Expired');
-      }
-      throw error;
-    }
+    return await this.jwtService.verifyAsync(token);
   }
 }

@@ -7,7 +7,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ObjectId } from 'mongoose';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { ExtractJwt } from './strategies';
 
 describe('AuthController', () => {
   let authController: AuthController;
@@ -38,7 +37,6 @@ describe('AuthController', () => {
       imports: [SharedModule],
       controllers: [AuthController],
       providers: [
-        ExtractJwt,
         { provide: ServiceTokens.AUTH, useClass: AuthService },
         rabbitProvider(ClientTokens.USER, RabbitQueue.USER),
       ],
