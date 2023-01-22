@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { AuthenticatedGuard } from '../../auth/src/guards';
+import { AuthenticatedGuard, JwtAuthGuard } from '../../auth/src/guards';
 import { IUser } from 'apps/user/src/db';
 import { catchError } from 'rxjs';
 import { User } from './decorators';
@@ -70,8 +70,6 @@ export class AppController {
   @UseGuards(AuthenticatedGuard)
   @Get('testgithub')
   githubGuard(@User() user: Partial<IUser>) {
-    console.log(user);
-
     return user;
   }
 }

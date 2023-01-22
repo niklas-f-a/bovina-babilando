@@ -11,14 +11,21 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const token = context.getArgs()[0]?.access_token;
+    const { access_token } = context?.getArgs()[0];
+
+    if (!access_token) return false;
+
     return this.authService
-      .verifyToken(token)
+      .verifyToken(access_token)
       .then((value) => {
         const args = context.getArgs();
         args[0] = value;
         return true;
       })
-      .catch(() => false);
+      .catch((error) => {
+        const args = context.getArgs();
+        args[0] = error;
+        return error;
+      });
   }
 }

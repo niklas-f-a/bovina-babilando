@@ -39,7 +39,8 @@ export class AuthController {
   @MessagePattern({ cmd: 'verify-jwt' })
   verifyJwt(@Ctx() context: RmqContext, @Payload() payload: Partial<IUser>) {
     this.sharedService.rabbitAck(context);
+    // console.log(payload, 'payload');
 
-    return { data: payload };
+    return payload;
   }
 }
