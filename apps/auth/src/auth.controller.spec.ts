@@ -1,5 +1,6 @@
 import { SharedModule, SharedService } from '@app/shared';
-import { ServiceTokens } from '@app/shared/config';
+import { ClientTokens, RabbitQueue, ServiceTokens } from '@app/shared/config';
+import { rabbitProvider } from '@app/shared/providers';
 import { RmqContext } from '@nestjs/microservices';
 
 import { Test, TestingModule } from '@nestjs/testing';
@@ -28,6 +29,8 @@ describe('AuthController', () => {
     rabbitAck: jest.fn((context) => ({})),
   };
 
+  const mockUserClient = {};
+
   const mockRabbitContext = {} as unknown as RmqContext;
 
   beforeEach(async () => {
@@ -36,13 +39,16 @@ describe('AuthController', () => {
       controllers: [AuthController],
       providers: [
         ExtractJwt,
-        { provide: ServiceTokens.AUTH_SERVICE, useClass: AuthService },
+        { provide: ServiceTokens.AUTH, useClass: AuthService },
+        rabbitProvider(ClientTokens.USER, RabbitQueue.USER),
       ],
     })
-      .overrideProvider(ServiceTokens.AUTH_SERVICE)
+      .overrideProvider(ServiceTokens.AUTH)
       .useValue(mockAuthService)
       .overrideProvider(SharedService)
       .useValue(mockSharedService)
+      .overrideProvider(ClientTokens.USER)
+      .useValue(mockUserClient)
       .compile();
 
     authController = app.get<AuthController>(AuthController);

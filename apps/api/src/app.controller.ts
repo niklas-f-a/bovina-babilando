@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { AuthenticatedGuard, GithubAuthGuard } from 'apps/auth/src/guards';
+import { AuthenticatedGuard } from '../../auth/src/guards';
 import { IUser } from 'apps/user/src/db';
 import { catchError } from 'rxjs';
 import { User } from './decorators';

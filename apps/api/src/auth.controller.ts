@@ -12,7 +12,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { LoginDto, SignUpDto } from '@app/shared/dto';
 import { catchError, map, switchMap } from 'rxjs';
-import { GithubAuthGuard } from 'apps/auth/src/guards';
+import { GithubAuthGuard } from '../../auth/src/guards';
 
 @Controller({
   version: '1',
