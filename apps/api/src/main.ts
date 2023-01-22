@@ -10,6 +10,7 @@ const MongoDBStore = makeMongoStore(session);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  let store;
 
   const configService = app.get(ConfigService);
   const mongoCred = configService.get('authDb');
@@ -17,10 +18,16 @@ async function bootstrap() {
     'session',
   );
 
-  const store = new MongoDBStore({
-    uri: mongoCred.uri,
-    collection: sessionCred.collection,
-  });
+  if (process.env.NODE_ENV !== 'test') {
+    store = new MongoDBStore({
+      uri: mongoCred.uri,
+      collection: sessionCred.collection,
+    });
+
+    // store.clear((err) => {
+    //   console.log(err, 'is');
+    // });
+  }
 
   app.setGlobalPrefix('api');
 

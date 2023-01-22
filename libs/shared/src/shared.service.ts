@@ -8,4 +8,8 @@ export class SharedService {
     const message = context.getMessage();
     channel.ack(message);
   }
+
+  testRmLater() {
+    return 'funkar';
+  }
 }

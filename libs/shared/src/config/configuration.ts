@@ -8,6 +8,7 @@ export default () => ({
     queue: {
       auth: process.env.RABBITMQ_AUTH_QUEUE,
       chat: process.env.RABBITMQ_CHAT_QUEUE,
+      user: process.env.RABBIT_USER_QUEUE,
     },
   },
   chatDb: {
@@ -24,10 +25,10 @@ export default () => ({
     clientId: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
     callbackURL: process.env.GITHUB_CALLBACK_URL,
-    scope: process.env.GITHUB_SCOPE.split(','),
   },
   session: {
     secret: process.env.SESSION_SECRET,
     collection: 'session',
   },
+  jwtSecret: process.env.JWT_SECRET,
 });

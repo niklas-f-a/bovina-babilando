@@ -1,10 +1,10 @@
-name: Chat Tests
+name: Shared Lib Tests
 
 on:
   pull_request:
     branches: [ main, develop ]
     paths:
-      - 'apps/chat/**'
+      - 'libs/shared/**'
 
 jobs:
   build:
@@ -23,4 +23,5 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run build --if-present
-      - run: npm test apps/chat
+      - run: npm test libs/shared
+      - run: npm test libs/shared
