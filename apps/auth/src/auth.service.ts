@@ -1,27 +1,42 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User, UserDocument } from './db';
-import { AuthFrom } from '@app/shared/config';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Credentials, IUser } from '../../user/src/db';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class AuthService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(private jwtService: JwtService) {}
 
-  async findUserById(id: string, authFrom: AuthFrom) {
-    return authFrom === AuthFrom.GITHUB_ID
-      ? await this.userModel.findOne({ githubId: id }).exec()
-      : await this.userModel.findById(id).exec();
+  async login(cred: Credentials, user: IUser) {
+    if (!user) throw new RpcException('Invalid credentials.');
+
+    const isMatch = await this.verifyPassword(cred.password, user.password);
+    if (!isMatch) {
+      throw new RpcException('Invalid credentials.');
+    }
+
+    const access_token = await this.jwtService.signAsync({
+      sub: user._id,
+      email: user.email,
+      githubId: user.githubId,
+    });
+
+    return { access_token };
   }
 
-  async findOrCreate(details: User, authFrom: AuthFrom) {
-    const user = await this.findUserById(details.githubId, authFrom);
-    if (user) return user;
-
-    return await this.createUser(details);
+  verifyPassword(password: string, hashPass: string) {
+    return bcrypt.compare(password, hashPass);
   }
 
-  async createUser(details: User) {
-    return this.userModel.create(details);
+  async verifyToken(token: string) {
+    try {
+      return await this.jwtService.verifyAsync(token);
+    } catch (error) {
+      if (error?.expiredAt < new Date()) {
+        throw new UnauthorizedException('Token Expired');
+      }
+      throw error;
+    }
   }
 }

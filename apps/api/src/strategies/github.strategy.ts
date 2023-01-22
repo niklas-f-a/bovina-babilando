@@ -4,13 +4,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Profile } from 'passport';
 import { ClientProxy } from '@nestjs/microservices';
 import { map, firstValueFrom } from 'rxjs';
-import { ServiceTokens } from '@app/shared/config';
+import { ClientTokens } from '@app/shared/config';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
-  constructor(
-    @Inject(ServiceTokens.AUTH_SERVICE) private authClient: ClientProxy,
-  ) {
+  constructor(@Inject(ClientTokens.USER) private userClient: ClientProxy) {
     super({
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
@@ -21,17 +19,16 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const { id: githubId, username, photos } = profile;
+    // CHANGES NEEDED
     return await firstValueFrom(
-      this.authClient
-        .send(
-          { cmd: 'find-or-create-from-githubId' },
-          {
-            githubId,
-            username,
-            photos,
-          },
-        )
-        .pipe(map((user) => user)),
+      this.userClient.send(
+        { cmd: 'find-or-create-from-githubId' },
+        {
+          githubId,
+          username,
+          photos,
+        },
+      ),
     );
   }
 }

@@ -1,13 +1,16 @@
-import { RabbitQueue, ServiceTokens } from '@app/shared/config';
+import { RabbitQueue, ClientTokens } from '@app/shared/config';
 import { rabbitProvider } from '@app/shared/providers';
-import { SessionSerializer } from '@app/shared/serializer';
+import { SessionSerializer } from './serializer';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Request } from 'express';
 import { AppController } from './app.controller';
 import { GithubStrategy } from './strategies';
+import { AuthController } from './auth.controller';
+import { of, map } from 'rxjs';
 
 describe('AppController', () => {
   let appController: AppController;
+  let authController: AuthController;
 
   const mockSerializer = {};
 
@@ -16,6 +19,16 @@ describe('AppController', () => {
   };
 
   const mockAuthClient = {};
+  const mockUserClient = {
+    send: jest.fn(() =>
+      of({
+        _id: 'dknvlkdnsvlkdn',
+        username: 'Billy',
+        githubId: 'fjijweifjpwejfpoewjkfp',
+        photos: [{ value: 'urlToPhoto' }],
+      }),
+    ),
+  };
 
   const mockRequest = {
     user: {
@@ -29,30 +42,31 @@ describe('AppController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       imports: [],
-      controllers: [AppController],
+      controllers: [AppController, AuthController],
       providers: [
         SessionSerializer,
         GithubStrategy,
-        rabbitProvider(ServiceTokens.AUTH_SERVICE, RabbitQueue.AUTH),
+        rabbitProvider(ClientTokens.AUTH, RabbitQueue.AUTH),
+        rabbitProvider(ClientTokens.USER, RabbitQueue.USER),
       ],
     })
       .overrideProvider(SessionSerializer)
       .useValue(mockSerializer)
       .overrideProvider(GithubStrategy)
       .useValue(mockStrategy)
-      .overrideProvider(ServiceTokens.AUTH_SERVICE)
+      .overrideProvider(ClientTokens.AUTH)
       .useValue(mockAuthClient)
+      .overrideProvider(ClientTokens.USER)
+      .useValue(mockUserClient)
       .compile();
 
     appController = app.get<AppController>(AppController);
+    authController = app.get<AuthController>(AuthController);
   });
 
   it('should return the user', () => {
-    expect(appController.getMe(mockRequest)).toEqual({
-      _id: expect.any(String),
-      username: 'Billy',
-      githubId: expect.any(String),
-      photos: [{ value: expect.any(String) }],
-    });
+    authController
+      .signup({}, { email: 'billy@nu.com', password: 'password' })
+      .pipe(map((res) => expect(res).toEqual({ message: 'ok' })));
   });
 });

@@ -1,11 +1,17 @@
 import { SharedModule } from '@app/shared';
-import { configuration, ServiceTokens } from '@app/shared/config';
+import {
+  configuration,
+  ClientTokens,
+  RabbitQueue,
+  ServiceTokens,
+} from '@app/shared/config';
+import { rabbitProvider } from '@app/shared/providers';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { dbConnection, User, UserSchema } from './db';
+import { JwtStrategy, ExtractJwt } from './strategies';
 
 @Module({
   imports: [
@@ -14,11 +20,26 @@ import { dbConnection, User, UserSchema } from './db';
       envFilePath: './.env',
       load: [configuration],
     }),
-    dbConnection,
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     SharedModule,
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        return {
+          secret: config.get('jwtSecret'),
+          signOptions: { expiresIn: '60s' },
+        };
+      },
+    }),
   ],
   controllers: [AuthController],
-  providers: [{ provide: ServiceTokens.AUTH_SERVICE, useClass: AuthService }],
+  providers: [
+    JwtStrategy,
+    ExtractJwt,
+    {
+      provide: ServiceTokens.AUTH,
+      useClass: AuthService,
+    },
+    rabbitProvider(ClientTokens.USER, RabbitQueue.USER),
+  ],
 })
 export class AuthModule {}

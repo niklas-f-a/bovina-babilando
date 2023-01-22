@@ -1,21 +1,21 @@
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { AuthModule } from './auth.module';
+import { UserModule } from './user.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AuthModule);
+  const app = await NestFactory.create(UserModule);
 
   const rabbitOptions = app
     .get(ConfigService)
-    .get<{ url: string; queue: { auth: string } }>('rabbitOptions');
+    .get<{ url: string; queue: { user: string } }>('rabbitOptions');
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
       urls: [rabbitOptions.url],
       noAck: false,
-      queue: rabbitOptions.queue.auth,
+      queue: rabbitOptions.queue.user,
       queueOptions: {
         durable: true,
       },
@@ -23,6 +23,5 @@ async function bootstrap() {
   });
 
   app.startAllMicroservices();
-  // app.listen(6001);
 }
 bootstrap();
