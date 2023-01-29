@@ -30,6 +30,10 @@ export class AuthService {
   }
 
   async verifyToken(token: string) {
-    return await this.jwtService.verifyAsync(token);
+    try {
+      return await this.jwtService.verifyAsync(token);
+    } catch (error) {
+      return error;
+    }
   }
 }

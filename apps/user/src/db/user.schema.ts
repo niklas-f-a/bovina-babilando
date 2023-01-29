@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model, ObjectId } from 'mongoose';
+import { HydratedDocument, ObjectId } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -26,6 +26,12 @@ export interface IUser {
   password: string;
   githubId?: string;
   photos?: { value: string }[];
+}
+
+export interface RIUser {
+  sub: string;
+  email: string;
+  githubId?: string;
 }
 
 export type Credentials = Pick<IUser, 'email' | 'password'>;

@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 import * as session from 'express-session';
 import * as makeMongoStore from 'connect-mongodb-session';
 import * as passport from 'passport';
-import { VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 
 const MongoDBStore = makeMongoStore(session);
 
@@ -49,6 +49,8 @@ async function bootstrap() {
 
   app.use(passport.initialize());
   app.use(passport.session());
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const port = configService.get('apiPort');
   await app.listen(port);

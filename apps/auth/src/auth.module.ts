@@ -22,12 +22,10 @@ import { AuthService } from './auth.service';
     SharedModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        return {
-          secret: config.get('jwtSecret'),
-          signOptions: { expiresIn: '60s' },
-        };
-      },
+      useFactory: (config: ConfigService) => ({
+        secret: config.get('jwtSecret'),
+        signOptions: { expiresIn: '15m' },
+      }),
     }),
   ],
   controllers: [AuthController],

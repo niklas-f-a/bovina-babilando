@@ -1,5 +1,6 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { ChatRoom, Message } from './models';
 
 export const dbConnection = [
   SequelizeModule.forRootAsync({
@@ -12,6 +13,7 @@ export const dbConnection = [
         ...dbOptions,
         autoLoadModels: true,
         synchronize: true,
+        models: [Message, ChatRoom],
       };
     },
     inject: [ConfigService],

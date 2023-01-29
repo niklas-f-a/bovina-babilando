@@ -1,3 +1,4 @@
+import { SharedService } from '@app/shared';
 import {
   ClientTokens,
   configuration,
@@ -11,16 +12,17 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
 import { dbConnection } from './db/connection';
-import { ChatRoom, Message } from './db/models';
+import { ChatRoom } from './db/models';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
+    SequelizeModule.forFeature([ChatRoom]),
     ...dbConnection,
-    SequelizeModule.forFeature([Message, ChatRoom]),
   ],
   controllers: [ChatController],
   providers: [
+    SharedService,
     { provide: ServiceTokens.CHAT, useClass: ChatService },
     rabbitProvider(ClientTokens.USER, RabbitQueue.USER),
   ],

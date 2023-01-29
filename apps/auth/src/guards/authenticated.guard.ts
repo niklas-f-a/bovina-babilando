@@ -2,6 +2,7 @@ import { ClientTokens } from '@app/shared/config';
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Inject,
   Injectable,
 } from '@nestjs/common';
@@ -15,17 +16,22 @@ export class AuthenticatedGuard implements CanActivate {
     const req = context.switchToHttp().getRequest();
     const { access_token } = req.session;
 
-    if (access_token) {
-      const user = await firstValueFrom(
-        this.authClient.send({ cmd: 'verify-jwt' }, { access_token }),
-      );
+    try {
+      if (access_token) {
+        const user = await firstValueFrom(
+          this.authClient.send({ cmd: 'verify-jwt' }, { access_token }),
+        );
 
-      if (user?.expiredAt || !user) return req.isAuthenticated();
+        return (req.user = user);
+      } else {
+        return req.isAuthenticated();
+      }
+    } catch (error) {
+      if (error.status === 403) {
+        throw new ForbiddenException();
+      }
 
-      req.user = user;
-      return true;
+      return req.isAuthenticated();
     }
-
-    return req.isAuthenticated();
   }
 }

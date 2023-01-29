@@ -20,10 +20,6 @@ import { ChatController, AuthController } from '../controllers';
   ],
   controllers: [AppController, AuthController, ChatController],
   providers: [
-    {
-      provide: APP_PIPE,
-      useClass: ValidationPipe,
-    },
     SessionSerializer,
     GithubStrategy,
     rabbitProvider(ClientTokens.AUTH, RabbitQueue.AUTH),

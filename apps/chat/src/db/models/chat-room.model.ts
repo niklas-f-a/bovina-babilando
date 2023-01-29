@@ -12,6 +12,9 @@ import { Message } from '.';
 @Table
 export class ChatRoom extends Model {
   @Column
+  createdBy: string;
+
+  @Column
   name: string;
 
   @CreatedAt
