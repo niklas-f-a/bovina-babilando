@@ -1,9 +1,10 @@
-import { Controller, Get } from '@nestjs/common';
+import { ServiceTokens } from '@app/shared/config';
+import { Controller, Get, Inject } from '@nestjs/common';
 import { ChatService } from './chat.service';
 
 @Controller()
 export class ChatController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(@Inject(ServiceTokens.CHAT) private chatService: ChatService) {}
 
   @Get()
   getHello(): string {

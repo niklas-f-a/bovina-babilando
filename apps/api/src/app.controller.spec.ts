@@ -5,7 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Request } from 'express';
 import { AppController } from './app.controller';
 import { GithubStrategy } from './strategies';
-import { AuthController } from './auth.controller';
+import { AuthController } from '../controllers/auth.controller';
 import { of, map } from 'rxjs';
 
 describe('AppController', () => {

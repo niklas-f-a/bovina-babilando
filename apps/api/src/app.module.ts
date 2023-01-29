@@ -6,8 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_PIPE } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { AppController } from './app.controller';
-import { AuthController } from './auth.controller';
 import { GithubStrategy } from './strategies';
+import { ChatController, AuthController } from '../controllers';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { GithubStrategy } from './strategies';
     }),
     PassportModule.register({ session: true }),
   ],
-  controllers: [AppController, AuthController],
+  controllers: [AppController, AuthController, ChatController],
   providers: [
     {
       provide: APP_PIPE,
@@ -28,6 +28,7 @@ import { GithubStrategy } from './strategies';
     GithubStrategy,
     rabbitProvider(ClientTokens.AUTH, RabbitQueue.AUTH),
     rabbitProvider(ClientTokens.USER, RabbitQueue.USER),
+    rabbitProvider(ClientTokens.CHAT, RabbitQueue.CHAT),
   ],
 })
 export class AppModule {}
