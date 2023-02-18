@@ -18,9 +18,8 @@ import { User } from './decorators';
 })
 export class AppController {
   constructor(
-    // @Inject('CHAT_SERVICE') private chatService: ClientProxy,
     @Inject(ClientTokens.AUTH) private authClient: ClientProxy,
-    @Inject(ClientTokens.USER) private userClient: ClientProxy,
+    @Inject(ClientTokens.CHAT) private chatClient: ClientProxy,
   ) {}
 
   // DONT USE
@@ -38,5 +37,10 @@ export class AppController {
   @Get('testgithub')
   githubGuard(@User() user: Partial<IUser>) {
     return user;
+  }
+
+  @Get('testmessage')
+  testMessage() {
+    return this.chatClient.send({ cmd: 'post-message' }, {});
   }
 }
