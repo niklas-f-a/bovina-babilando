@@ -49,4 +49,14 @@ export class ChatController {
         ),
       );
   }
+
+  // testing send roomid to get all messages with room
+  @Get('hall')
+  findOne(@User() user: RIUser) {
+    const payload = {
+      chatRoomId: 4,
+    };
+
+    return this.chatClient.send({ cmd: 'find-chat-room' }, payload);
+  }
 }

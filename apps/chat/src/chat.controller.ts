@@ -38,4 +38,21 @@ export class ChatController {
 
     return this.chatService.getAllChatRooms(chatRoomIds);
   }
+
+  @MessagePattern({ cmd: 'post-message' })
+  postMessage(@Ctx() context: RmqContext) {
+    this.sharedService.rabbitAck(context);
+
+    return this.chatService.addMessage();
+  }
+
+  @MessagePattern({ cmd: 'find-chat-room' })
+  findOneChatRoom(
+    @Payload('chatRoomId') chatRoomId: string,
+    @Ctx() context: RmqContext,
+  ) {
+    this.sharedService.rabbitAck(context);
+
+    return this.chatService.findOneChatRoom(chatRoomId);
+  }
 }
