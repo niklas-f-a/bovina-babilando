@@ -1,12 +1,11 @@
 import { SharedModule } from '@app/shared';
-import { configuration, ClientTokens, ServiceTokens } from '@app/shared/config';
+import { configuration, ServiceTokens } from '@app/shared/config';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { dbConnection, User, UserSchema } from './db';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import * as bcrypt from 'bcrypt';
 
 @Module({
   imports: [
@@ -17,22 +16,7 @@ import * as bcrypt from 'bcrypt';
     }),
     SharedModule,
     dbConnection,
-    MongooseModule.forFeatureAsync([
-      {
-        name: User.name,
-        useFactory: () => {
-          const schema = UserSchema;
-          schema.pre('save', async function () {
-            if (this?.githubId) {
-              return;
-            }
-            this.password = await bcrypt.hash(this.password, 10);
-          });
-
-          return schema;
-        },
-      },
-    ]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UserController],
   providers: [

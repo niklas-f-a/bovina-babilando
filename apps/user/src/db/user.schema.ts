@@ -18,6 +18,9 @@ export class User {
 
   @Prop()
   photos: { value: string }[];
+
+  @Prop()
+  chatRooms: string[];
 }
 
 export interface IUser {
@@ -26,6 +29,7 @@ export interface IUser {
   password: string;
   githubId?: string;
   photos?: { value: string }[];
+  chatRooms: string[];
 }
 
 export interface RIUser {

@@ -28,4 +28,14 @@ export class ChatController {
     // emit to WS
     return newChatRoom;
   }
+
+  @MessagePattern({ cmd: 'get-chat-rooms' })
+  getAllChatRooms(
+    @Payload('chatRoomIds') chatRoomIds: string[],
+    @Ctx() context: RmqContext,
+  ) {
+    this.sharedService.rabbitAck(context);
+
+    return this.chatService.getAllChatRooms(chatRoomIds);
+  }
 }

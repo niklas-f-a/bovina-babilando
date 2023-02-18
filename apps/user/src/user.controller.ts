@@ -4,6 +4,7 @@ import { SignUpDto } from '@app/shared/dto';
 import { Controller, Inject } from '@nestjs/common';
 import {
   Ctx,
+  EventPattern,
   MessagePattern,
   Payload,
   RmqContext,
@@ -29,7 +30,7 @@ export class UserController {
   findByEmail(@Ctx() context: RmqContext, @Payload() payload: any) {
     this.sharedService.rabbitAck(context);
 
-    return this.userService.findByEmail(payload.email, payload.select);
+    return this.userService.findByEmail(payload.email, payload?.select);
   }
 
   @MessagePattern({ cmd: 'find-or-create-from-githubId' })
@@ -47,5 +48,15 @@ export class UserController {
     this.sharedService.rabbitAck(context);
 
     return await this.userService.findByGithubId(payload);
+  }
+
+  @MessagePattern({ cmd: 'add-chat-room' })
+  async addChatRoomId(
+    @Ctx() context: RmqContext,
+    @Payload() payload: { userId: string; chatRoomId: string },
+  ) {
+    this.sharedService.rabbitAck(context);
+
+    return await this.userService.addChatRoom(payload);
   }
 }

@@ -1,6 +1,8 @@
 import { ChatRoomDto } from '@app/shared/dto';
 import { Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/sequelize';
+import { catchError, concatMap, from, toArray } from 'rxjs';
 import { ChatRoom } from './db/models';
 
 @Injectable()
@@ -15,5 +17,15 @@ export class ChatService {
       ...chatRoomDto,
       createdBy: chatRoomDto.userId,
     });
+  }
+
+  getAllChatRooms(chatRoomId: string[]) {
+    return from(chatRoomId).pipe(
+      concatMap((value) => this.chatRoomModel.findByPk(value)),
+      toArray(),
+      catchError((error) => {
+        throw new RpcException(error.message);
+      }),
+    );
   }
 }

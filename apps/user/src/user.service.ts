@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import { SignUpDto } from '@app/shared/dto';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,6 +13,7 @@ export class UserService {
     try {
       return await new this.userModel({
         ...details,
+        password: (details.password = await bcrypt.hash(details.password, 10)),
       }).save();
     } catch (error) {
       if (error.code === 11000) {
@@ -35,5 +37,18 @@ export class UserService {
     if (foundUser) return foundUser;
 
     return await this.userModel.create(user);
+  }
+
+  async addChatRoom({
+    userId,
+    chatRoomId,
+  }: {
+    userId: string;
+    chatRoomId: string;
+  }) {
+    const user = await this.userModel.findById(userId).exec();
+    user.chatRooms.push(chatRoomId);
+
+    return user.save();
   }
 }
