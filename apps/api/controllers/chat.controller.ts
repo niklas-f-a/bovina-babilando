@@ -8,6 +8,7 @@ import {
   Get,
   Inject,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -72,6 +73,11 @@ export class ChatController {
         );
       }),
     );
+  }
+
+  @Patch(':id')
+  updateChatRoom(@Param('id') roomId: string, @Body('name') name: ChatRoomDto) {
+    return this.chatClient.send({ cmd: 'update-chat-room' }, { roomId, name });
   }
 
   // testing send roomid to get all messages with room

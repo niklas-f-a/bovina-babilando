@@ -65,4 +65,11 @@ export class ChatController {
 
     return await this.chatService.deleteChatRoom(roomId);
   }
+
+  @MessagePattern({ cmd: 'update-chat-room' })
+  async updateChatRoom(@Payload() payload: any, @Ctx() context: RmqContext) {
+    this.sharedService.rabbitAck(context);
+
+    return await this.chatService.updateChatRoom(payload);
+  }
 }

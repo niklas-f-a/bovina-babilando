@@ -57,4 +57,8 @@ export class ChatService {
     }
     return new RpcException(`Could not delete room with id: ${roomId}`);
   }
+
+  async updateChatRoom({ roomId, name }: any) {
+    return this.chatRoomModel.update({ name }, { where: { id: roomId } });
+  }
 }
