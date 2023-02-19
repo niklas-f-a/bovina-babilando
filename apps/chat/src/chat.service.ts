@@ -21,8 +21,8 @@ export class ChatService {
     });
   }
 
-  getAllChatRooms(chatRoomId: string[]) {
-    return from(chatRoomId).pipe(
+  getAllChatRooms(chatRoomIds: string[]) {
+    return from(chatRoomIds).pipe(
       concatMap((value) => this.chatRoomModel.findByPk(value)),
       toArray(),
       catchError((error) => {
@@ -41,5 +41,20 @@ export class ChatService {
 
   findOneChatRoom(chatRoomId: string) {
     return this.chatRoomModel.findByPk(chatRoomId, { include: [Message] });
+  }
+
+  async deleteChatRoom(roomId: string) {
+    await this.messageModel.destroy({
+      where: { roomId },
+    });
+
+    const roomsDeleted = await this.chatRoomModel.destroy({
+      where: { id: roomId },
+    });
+
+    if (roomsDeleted > 0) {
+      return { message: `room with id: ${roomId} was deleted` };
+    }
+    return new RpcException(`Could not delete room with id: ${roomId}`);
   }
 }

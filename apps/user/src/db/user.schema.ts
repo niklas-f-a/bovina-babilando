@@ -20,7 +20,7 @@ export class User {
   photos: { value: string }[];
 
   @Prop()
-  chatRooms: string[];
+  chatRooms: number[];
 }
 
 export interface IUser {

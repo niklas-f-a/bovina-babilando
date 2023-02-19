@@ -1,4 +1,5 @@
 import {
+  AllowNull,
   Column,
   CreatedAt,
   ForeignKey,

@@ -59,4 +59,14 @@ export class UserController {
 
     return await this.userService.addChatRoom(payload);
   }
+
+  @MessagePattern({ cmd: 'delete-chat-room' })
+  async deleteChatRoom(
+    @Ctx() context: RmqContext,
+    @Payload() payload: { roomId: number; userId: string },
+  ) {
+    this.sharedService.rabbitAck(context);
+
+    return await this.userService.deleteChatRoom(payload);
+  }
 }

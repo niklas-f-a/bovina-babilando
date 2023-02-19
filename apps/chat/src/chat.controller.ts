@@ -48,11 +48,21 @@ export class ChatController {
 
   @MessagePattern({ cmd: 'find-chat-room' })
   findOneChatRoom(
-    @Payload('chatRoomId') chatRoomId: string,
+    @Payload('roomId') roomId: string,
     @Ctx() context: RmqContext,
   ) {
     this.sharedService.rabbitAck(context);
 
-    return this.chatService.findOneChatRoom(chatRoomId);
+    return this.chatService.findOneChatRoom(roomId);
+  }
+
+  @MessagePattern({ cmd: 'delete-chat-room' })
+  async deleteChatRoom(
+    @Payload('roomId') roomId: string,
+    @Ctx() context: RmqContext,
+  ) {
+    this.sharedService.rabbitAck(context);
+
+    return await this.chatService.deleteChatRoom(roomId);
   }
 }

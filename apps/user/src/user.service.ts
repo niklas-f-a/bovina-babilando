@@ -47,8 +47,15 @@ export class UserService {
     chatRoomId: string;
   }) {
     const user = await this.userModel.findById(userId).exec();
-    user.chatRooms.push(chatRoomId);
+    user.chatRooms.push(+chatRoomId);
 
     return user.save();
+  }
+
+  async deleteChatRoom({ userId, roomId }: { userId: string; roomId: number }) {
+    const user = await this.userModel.findById(userId).exec();
+
+    user.chatRooms = user.chatRooms.filter((room) => room !== Number(roomId));
+    user.save();
   }
 }

@@ -1,10 +1,20 @@
 import { ClientTokens } from '@app/shared/config';
 import { ChatRoomDto } from '@app/shared/dto';
-import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AuthenticatedGuard } from 'apps/auth/src/guards';
-import { RIUser } from 'apps/user/src/db';
-import { map, switchMap } from 'rxjs';
+import { IUser, RIUser } from 'apps/user/src/db';
+import { catchError, map, of, switchMap } from 'rxjs';
 import { User } from '../src/decorators';
 
 @UseGuards(AuthenticatedGuard)
@@ -50,13 +60,23 @@ export class ChatController {
       );
   }
 
-  // testing send roomid to get all messages with room
-  @Get('hall')
-  findOne(@User() user: RIUser) {
-    const payload = {
-      chatRoomId: 4,
-    };
+  @Delete(':id')
+  deleteChatRoom(@Param('id') roomId: string, @User() user: RIUser) {
+    return this.chatClient.send({ cmd: 'delete-chat-room' }, { roomId }).pipe(
+      switchMap(({ error }) => {
+        if (error) return error;
 
-    return this.chatClient.send({ cmd: 'find-chat-room' }, payload);
+        this.userClient.send(
+          { cmd: 'delete-chat-room' },
+          { roomId, userId: user.sub },
+        );
+      }),
+    );
+  }
+
+  // testing send roomid to get all messages with room
+  @Get(':id')
+  findOne(@Param('id') roomId: string) {
+    return this.chatClient.send({ cmd: 'find-chat-room' }, { roomId });
   }
 }
