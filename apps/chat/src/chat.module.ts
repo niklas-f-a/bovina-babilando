@@ -13,12 +13,14 @@ import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
 import { dbConnection } from './db/connection';
 import { ChatRoom, Message } from './db/models';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
     SequelizeModule.forFeature([ChatRoom, Message]),
     ...dbConnection,
+    GatewayModule,
   ],
   controllers: [ChatController],
   providers: [
