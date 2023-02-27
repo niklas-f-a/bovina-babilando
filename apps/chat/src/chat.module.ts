@@ -7,7 +7,8 @@ import {
 } from '@app/shared/config';
 import { rabbitProvider } from '@app/shared/providers';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
@@ -21,12 +22,20 @@ import { GatewayModule } from './gateway/gateway.module';
     SequelizeModule.forFeature([ChatRoom, Message]),
     ...dbConnection,
     GatewayModule,
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get('jwtSecret'),
+        signOptions: { expiresIn: '15m' },
+      }),
+    }),
   ],
   controllers: [ChatController],
   providers: [
     SharedService,
     { provide: ServiceTokens.CHAT, useClass: ChatService },
     rabbitProvider(ClientTokens.USER, RabbitQueue.USER),
+    rabbitProvider(ClientTokens.AUTH, RabbitQueue.AUTH),
   ],
 })
 export class ChatModule {}
